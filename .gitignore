@@ -18,3 +18,15 @@
 /public/assets/
 /assets/vendor/
 ###< symfony/asset-mapper ###
+###> project/local artifacts ###
+/phpunit.err
+/phpunit.out
+/.idea/
+/.vscode/
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*.log
+/node_modules/
+/siiker-after-hours/

@@ -1,0 +1,658 @@
+{% extends 'base.html.twig' %}
+
+{#
+  ─────────────────────────────────────────────────────────────
+  CONTENT LIVES HERE. To add an experience, lab or skill, add one
+  entry to the lists below. The markup further down loops over them.
+  ─────────────────────────────────────────────────────────────
+#}
+
+{% set experience = [
+  { 'year': '2025', 'org': 'Tunisie Telecom', 'kind': 'Advanced internship', 'focus': 'Network engineering',
+    'bullets': [
+      'Designed a multi-site network architecture with GNS3',
+      'Configured VLANs, trunking, DHCP and inter-VLAN routing',
+      'Implemented HSRP for high availability',
+      'Simulated an operator network with PE/P equipment',
+      'Configured MPLS, LDP and OSPF'
+    ],
+    'tags': ['GNS3', 'VLAN', 'HSRP', 'MPLS', 'LDP', 'OSPF'] },
+  { 'year': '2025', 'org': 'CRE Manouba', 'kind': 'Initiation internship', 'focus': 'Full-stack development',
+    'bullets': [
+      'Built TicketFlow, a full-stack ticket management application',
+      'Implemented user roles: client, technician, administrator',
+      'Designed and managed the MongoDB database',
+      'Developed secured REST APIs (JWT, bcryptjs)',
+      'Set up authentication and access control'
+    ],
+    'tags': ['Node.js', 'Express.js', 'MongoDB', 'JWT', 'bcryptjs'] },
+  { 'year': '2024', 'org': 'Sopra HR Software', 'kind': 'Final-year project (PFE)', 'focus': 'DevOps and CI/CD',
+    'bullets': [
+      'Designed and set up a CI/CD pipeline for an HR web application (GP4YOU)',
+      'Automated deployments with Jenkins and Argo CD (GitOps approach)',
+      'Containerised with Docker and orchestrated on Kubernetes (Minikube)',
+      'Set up automated tests with Jest and Cypress',
+      'Integrated application security tests (XSS, CSRF)'
+    ],
+    'tags': ['Jenkins', 'Argo CD', 'Docker', 'Kubernetes', 'Jest', 'Cypress'] },
+  { 'year': '2023', 'org': 'Groupe Chimique Tunisien', 'kind': 'Internship', 'focus': 'Network monitoring',
+    'bullets': [
+      'Monitored network equipment with Nagios',
+      'Tracked the availability of IT equipment',
+      'Configured alerts and assisted with diagnostics'
+    ],
+    'tags': ['Nagios', 'Monitoring'] },
+  { 'year': '2022', 'org': 'CRE Manouba', 'kind': 'Internship', 'focus': 'System administration',
+    'bullets': [
+      'Administered Active Directory on Windows Server',
+      'Managed users and groups in a Windows domain',
+      'Provided basic system support and administration'
+    ],
+    'tags': ['Active Directory', 'Windows Server'] }
+] %}
+
+{% set labs = [
+  { 'no': 'A', 'title': 'Network Security Lab', 'cmd': 'wan → firewall → lan',
+    'text': 'A virtualised environment built with VMware and pfSense, with network segmentation, firewalling and traffic filtering rules.',
+    'tags': ['VMware', 'pfSense', 'Firewall', 'Segmentation'] },
+  { 'no': 'B', 'title': 'DNS Server', 'cmd': '$ dig · nslookup',
+    'text': 'An internal DNS server on Ubuntu with BIND9, using forward and reverse zones, with name resolution tested using dig and nslookup.',
+    'tags': ['Ubuntu', 'BIND9', 'DNS'] },
+  { 'no': 'C', 'title': 'Mail Server', 'cmd': 'smtp → imap',
+    'text': 'A Linux mail server configured with Postfix and Dovecot, providing SMTP and IMAP for internal communication.',
+    'tags': ['Postfix', 'Dovecot', 'SMTP', 'IMAP'] }
+] %}
+
+{% set skills = [
+  { 'title': 'Networks & Systems', 'cmd': 'stack --category networks', 'items': [
+    ['TCP/IP', 'Tunisie Telecom: multi-site architecture and routing'],
+    ['VLAN', 'Tunisie Telecom: VLANs, trunking and inter-VLAN routing'],
+    ['NAT', 'Network labs: address translation'],
+    ['DHCP', 'Tunisie Telecom: DHCP configuration'],
+    ['OSPF', 'Tunisie Telecom: operator network routing'],
+    ['HSRP', 'Tunisie Telecom: high availability gateways'],
+    ['MPLS / LDP', 'Tunisie Telecom: PE/P operator network'],
+    ['GNS3', 'Tunisie Telecom: network simulation'],
+    ['Active Directory', 'CRE Manouba (2022): Windows Server domain administration'],
+    ['DNS / BIND9', 'Lab: internal DNS with forward and reverse zones'],
+    ['Postfix / Dovecot', 'Lab: SMTP and IMAP mail server on Linux']
+  ] },
+  { 'title': 'Network Security', 'cmd': 'stack --category security', 'items': [
+    ['Firewalling', 'Security lab: filtering rules on pfSense'],
+    ['Segmentation', 'Security lab: segmented virtual networks'],
+    ['pfSense', 'Security lab: firewall inside a VMware environment'],
+    ['VMware', 'Security lab: virtualised environment'],
+    ['XSS / CSRF', 'Sopra HR: application security tests in the pipeline'],
+    ['JWT / bcryptjs', 'CRE Manouba: secure authentication and access control']
+  ] },
+  { 'title': 'DevOps & Monitoring', 'cmd': 'stack --category devops', 'items': [
+    ['Docker', 'Sopra HR (PFE): containerised services'],
+    ['Kubernetes', 'Sopra HR (PFE): orchestration on Minikube'],
+    ['Jenkins', 'Sopra HR (PFE): automated build, test and release'],
+    ['Argo CD', 'Sopra HR (PFE): GitOps deployment'],
+    ['Jest / Cypress', 'Sopra HR (PFE): automated tests'],
+    ['Nagios', 'Groupe Chimique Tunisien: equipment monitoring and alerts'],
+    ['Git / GitHub', 'Everywhere: version control']
+  ] },
+  { 'title': 'Backend & Web', 'cmd': 'stack --category web', 'items': [
+    ['React', 'Zento: storefront and interfaces'],
+    ['Node.js', 'Zento, TicketFlow: backend services'],
+    ['Express.js', 'Zento, TicketFlow: REST APIs and routing'],
+    ['PHP', 'Backend development'],
+    ['Symfony', 'This portfolio: Symfony and Twig']
+  ] },
+  { 'title': 'Languages & Databases', 'cmd': 'stack --category data', 'items': [
+    ['JavaScript', 'Web and backend'],
+    ['Python', 'Scripting and backend'],
+    ['C', 'Programming'],
+    ['C++', 'Programming'],
+    ['Java', 'Programming'],
+    ['SQL', 'Querying relational databases'],
+    ['MongoDB', 'TicketFlow: designed and managed the database'],
+    ['MySQL', 'Relational databases'],
+    ['PostgreSQL', 'Zento: relational database']
+  ] }
+] %}
+
+{% set languages = [
+  { 'name': 'French', 'level': 'Intermediate', 'lv': 3 },
+  { 'name': 'English', 'level': 'Good', 'lv': 4 },
+  { 'name': 'German', 'level': 'A2', 'lv': 2 }
+] %}
+
+{# Skill map data: tools grouped by area, and the entries (projects, placements, labs) that used them.
+   `tools` names must match the entries' tool names. `proj` / `exp` are anchors on this page. #}
+{% set graphTools = [
+  { 'g': 'Web',      'items': ['React', 'Node.js', 'Express.js', 'JWT', 'bcryptjs'] },
+  { 'g': 'Data',     'items': ['PostgreSQL', 'MongoDB'] },
+  { 'g': 'Network',  'items': ['TCP/IP', 'VLAN', 'DHCP', 'HSRP', 'MPLS', 'OSPF', 'GNS3'] },
+  { 'g': 'DevOps',   'items': ['Git', 'Jenkins', 'Docker', 'Kubernetes', 'Argo CD', 'Jest', 'Cypress'] },
+  { 'g': 'Security', 'items': ['XSS/CSRF', 'Firewalling', 'Segmentation', 'pfSense', 'VMware'] },
+  { 'g': 'Infra',    'items': ['Ubuntu', 'BIND9', 'Postfix', 'Dovecot', 'Nagios', 'Active Directory'] }
+] %}
+
+{% set entities = [
+  { 'name': 'Zento', 'meta': 'Personal project · in progress',
+    'tools': ['React', 'Node.js', 'Express.js', 'PostgreSQL'], 'proj': '#zento', 'exp': '' },
+  { 'name': 'Ticket Flow', 'meta': 'CRE Manouba · 2025',
+    'tools': ['Node.js', 'Express.js', 'MongoDB', 'JWT', 'bcryptjs'], 'proj': '#p-ticketflow', 'exp': '#xp-2' },
+  { 'name': 'Network Systems', 'meta': 'Tunisie Telecom · 2025',
+    'tools': ['TCP/IP', 'VLAN', 'DHCP', 'HSRP', 'MPLS', 'OSPF', 'GNS3'], 'proj': '#p-network', 'exp': '#xp-1' },
+  { 'name': 'CI/CD Pipeline', 'meta': 'Sopra HR · final-year project · 2024',
+    'tools': ['Git', 'Jenkins', 'Docker', 'Kubernetes', 'Argo CD', 'Jest', 'Cypress', 'XSS/CSRF'], 'proj': '#p-cicd', 'exp': '#xp-3' },
+  { 'name': 'Security lab', 'meta': 'VMware + pfSense',
+    'tools': ['VMware', 'pfSense', 'Firewalling', 'Segmentation'], 'proj': '#lab-a', 'exp': '' },
+  { 'name': 'DNS server', 'meta': 'Ubuntu + BIND9',
+    'tools': ['Ubuntu', 'BIND9'], 'proj': '#lab-b', 'exp': '' },
+  { 'name': 'Mail server', 'meta': 'Postfix + Dovecot',
+    'tools': ['Postfix', 'Dovecot'], 'proj': '#lab-c', 'exp': '' },
+  { 'name': 'Network monitoring', 'meta': 'Groupe Chimique Tunisien · 2023',
+    'tools': ['Nagios'], 'proj': '', 'exp': '#xp-4' },
+  { 'name': 'System administration', 'meta': 'CRE Manouba · 2022',
+    'tools': ['Active Directory'], 'proj': '', 'exp': '#xp-5' }
+] %}
+
+{% block body %}
+
+{# ───────── Boot screen (pure-CSS exit, so it can never get stuck) ───────── #}
+<div class="boot" aria-hidden="true">
+  <div class="boot-in">
+    <span class="mono">Establishing link / Tunis</span>
+    <span class="boot-n">000</span>
+    <i class="boot-bar"></i>
+  </div>
+</div>
+
+{# ───────── Header ───────── #}
+<header class="hd">
+  <div class="wrap hd-in">
+    <a class="logo" href="#hero" aria-label="SIIKER, back to top"><i></i><span>SIIKER</span></a>
+
+    <nav class="nav" aria-label="Sections">
+      <a href="#projects" data-sec="projects"><span class="roll"><span data-t="Projects">Projects</span></span></a>
+      <a href="#experience" data-sec="experience"><span class="roll"><span data-t="Experience">Experience</span></span></a>
+      <a href="#skills" data-sec="skills"><span class="roll"><span data-t="Skills">Skills</span></span></a>
+      <a href="#about" data-sec="about"><span class="roll"><span data-t="About">About</span></span></a>
+      <a href="#contact" data-sec="contact"><span class="roll"><span data-t="Contact">Contact</span></span></a>
+    </nav>
+
+    <div class="hd-r">
+      <button class="kbtn" type="button" data-pal-open aria-label="Open command palette"><span>Search</span><kbd>Ctrl K</kbd></button>
+      <span class="mono hd-clock"><i class="live"></i>TUN <time data-clock="hm">--:--</time></span>
+      <button class="motion" type="button" data-motion-toggle aria-pressed="true" title="Switch animations on or off">
+        <span class="motion-dot"></span><span class="motion-t">Motion on</span>
+      </button>
+      <button class="menu-btn" type="button" aria-expanded="false" aria-controls="sheet" aria-label="Menu"><i></i><i></i></button>
+    </div>
+  </div>
+</header>
+
+<div class="sheet" id="sheet" aria-hidden="true">
+  <nav aria-label="Mobile sections">
+    <a href="#projects" data-sec="projects"><span class="mono">01</span>Projects</a>
+    <a href="#experience" data-sec="experience"><span class="mono">02</span>Experience</a>
+    <a href="#skills" data-sec="skills"><span class="mono">03</span>Skills</a>
+    <a href="#about" data-sec="about"><span class="mono">04</span>About</a>
+    <a href="#contact" data-sec="contact"><span class="mono">05</span>Contact</a>
+  </nav>
+</div>
+
+<nav class="rail" aria-label="Page sections">
+  <a href="#projects" data-sec="projects"><span>Projects</span><i></i></a>
+  <a href="#experience" data-sec="experience"><span>Experience</span><i></i></a>
+  <a href="#skills" data-sec="skills"><span>Skills</span><i></i></a>
+  <a href="#about" data-sec="about"><span>About</span><i></i></a>
+  <a href="#contact" data-sec="contact"><span>Contact</span><i></i></a>
+</nav>
+
+<main id="main">
+
+{# ───────── Hero ───────── #}
+<section class="hero" id="hero" aria-labelledby="h1">
+  <canvas class="fx" id="fx" aria-hidden="true"></canvas>
+
+  <div class="wrap hero-in">
+    <div class="hero-top mono" data-intro>
+      <span>Engineering student · Networks · DevOps · Full-stack</span>
+      <span>Portfolio / 2026</span>
+      <span class="status"><i class="live"></i>Online · Based in Tunis</span>
+    </div>
+
+    <h1 class="h1 display" id="h1">
+      <span class="ln"><span>Not here to</span></span>
+      <span class="ln o"><span>make another</span></span>
+      <span class="ln"><span class="lime">template.</span></span>
+    </h1>
+
+    <div class="hero-bot">
+      <div class="hero-l" data-intro style="--d:.15s">
+        <p class="intro">I build software, explore systems, and turn ideas into working things.</p>
+        <a class="now" href="#zento"><i class="live"></i>Now building <b>Zento, an e-commerce platform</b></a>
+      </div>
+
+      <p class="focus mono" data-intro style="--d:.25s">
+        Currently into
+        <span class="flip"><span class="flip-in"><b>Networks</b><b>DevOps</b><b>Cybersecurity</b><b>Full-stack</b><b>Networks</b></span></span>
+      </p>
+
+      <div class="cta-row" data-intro style="--d:.35s">
+        <a class="btn" data-mag href="#projects">See my projects <span class="ar" aria-hidden="true">→</span></a>
+        <a class="btn ghost" data-mag href="{{ asset('cv/Ben-Lagha-Mohamed-CV.pdf') }}" download>Download CV</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="scroll-cue mono" aria-hidden="true"><i></i>Scroll</div>
+</section>
+
+{# ───────── Marquee ───────── #}
+{% set rowA = ['TCP/IP','VLAN','HSRP','MPLS','OSPF','GNS3','pfSense','BIND9','Docker','Kubernetes','Jenkins','Argo CD','Nagios'] %}
+{% set rowB = ['React','Node.js','Express.js','PostgreSQL','MongoDB','MySQL','JWT','PHP','Python','JavaScript','C/C++','Java','Jest','Cypress'] %}
+<div class="marq-wrap" aria-hidden="true">
+  <div class="marq">
+    <div class="marq-row"><div class="marq-track">
+      {% for n in 1..2 %}<div class="marq-set">{% for t in rowA %}<span>{{ t }}</span><i></i>{% endfor %}</div>{% endfor %}
+    </div></div>
+    <div class="marq-row rev"><div class="marq-track">
+      {% for n in 1..2 %}<div class="marq-set">{% for t in rowB %}<span>{{ t }}</span><i></i>{% endfor %}</div>{% endfor %}
+    </div></div>
+  </div>
+</div>
+
+{# ───────── 01 Projects ───────── #}
+<section class="sec projects" id="projects" aria-labelledby="projects-h">
+  <div class="wrap">
+    <header class="sec-head">
+      <p class="mono sec-k"><span class="lime">01</span> / Projects</p>
+      <h2 class="sec-title display" id="projects-h" data-split>Things I've <em>built.</em></h2>
+      <p class="sec-sub">Four featured builds from personal work, internships and my final-year project, plus three hands-on infrastructure labs.</p>
+      <i class="rule"></i>
+    </header>
+
+    <div class="sub-head first">
+      <h3 class="display"><span></span>Featured projects</h3>
+      <span class="count mono">04 projects</span>
+    </div>
+
+    <div class="deck">
+
+      {# Zento #}
+      <article class="card" id="zento" style="--i:0" aria-labelledby="p1t">
+        <div class="card-in">
+          <span class="card-no" data-par="0.07" aria-hidden="true">01</span>
+          <div class="card-copy" data-r>
+            <div class="card-meta mono"><span class="lime">01</span><span>Personal project</span><span class="badge"><i class="live"></i>In progress</span></div>
+            <h3 class="pt display" id="p1t">Zento</h3>
+            <p class="pd">A full-stack electronics e-commerce platform built with React, Node.js, Express, and PostgreSQL. Features secure authentication, product management, shopping carts, order processing, and role-based access for customers, administrators, and delivery personnel.</p>
+            <ul class="feat" aria-label="Scope">
+              <li>Secure authentication</li>
+              <li>Product management</li>
+              <li>Shopping carts and order processing</li>
+              <li>Role-based access: customer, admin, delivery</li>
+            </ul>
+            <ul class="tech" aria-label="Technologies"><li>React</li><li>Node.js</li><li>Express</li><li>PostgreSQL</li></ul>
+          </div>
+          <div class="card-viz" data-r style="--d:.12s">
+            <div class="viz viz-shop" aria-hidden="true">
+              <div class="vbar"><i></i><i></i><i></i><span class="mono">zento / storefront</span></div>
+              <div class="vbody">
+                <div class="roles mono"><span style="--k:0">Customer</span><span style="--k:1">Admin</span><span style="--k:2">Delivery</span></div>
+                <div class="tiles">
+                  <div class="tile" style="--k:0"><div class="ph"></div><b></b><s></s></div>
+                  <div class="tile" style="--k:1"><div class="ph"></div><b></b><s></s></div>
+                  <div class="tile" style="--k:2"><div class="ph"></div><b></b><s></s></div>
+                  <div class="tile" style="--k:3"><div class="ph"></div><b></b><s></s></div>
+                  <div class="tile" style="--k:4"><div class="ph"></div><b></b><s></s></div>
+                  <div class="tile" style="--k:5"><div class="ph"></div><b></b><s></s></div>
+                </div>
+                <div class="cart">
+                  <span class="mono">Cart</span>
+                  <div class="items"><i style="--k:0"></i><i style="--k:1"></i><i style="--k:2"></i><i style="--k:3"></i></div>
+                  <span class="mono lime">Order → Delivered</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      {# TicketFlow #}
+      <article class="card" id="p-ticketflow" style="--i:1" aria-labelledby="p2t">
+        <div class="card-in">
+          <span class="card-no" data-par="0.07" aria-hidden="true">02</span>
+          <div class="card-copy" data-r>
+            <div class="card-meta mono"><span class="lime">02</span><span>Internship · CRE Manouba · 2025</span></div>
+            <h3 class="pt display" id="p2t">Ticket Flow</h3>
+            <p class="pd">A full-stack ticket management application with role-based access for clients, technicians and administrators. It has a secured REST API, authentication and access control, and a MongoDB database I designed and managed.</p>
+            <ul class="tech" aria-label="Technologies"><li>Node.js</li><li>Express.js</li><li>MongoDB</li><li>JWT</li><li>bcryptjs</li></ul>
+          </div>
+          <div class="card-viz" data-r style="--d:.12s">
+            <div class="viz viz-tix" aria-hidden="true">
+              <div class="vbar"><i></i><i></i><i></i><span class="mono">ticketflow / board</span></div>
+              <div class="vbody">
+                <div class="roles mono"><span style="--k:0">Client</span><span style="--k:1">Technician</span><span style="--k:2">Admin</span></div>
+                <div class="cols">
+                  <div class="col"><span class="mono">Open</span><div class="tk"></div><div class="tk"></div></div>
+                  <div class="col"><span class="mono">In progress</span><div class="tk"></div></div>
+                  <div class="col"><span class="mono">Resolved</span><div class="tk"></div><div class="tk"></div></div>
+                  <div class="tk mover"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      {# Network #}
+      <article class="card" id="p-network" style="--i:2" aria-labelledby="p3t">
+        <div class="card-in">
+          <span class="card-no" data-par="0.07" aria-hidden="true">03</span>
+          <div class="card-copy" data-r>
+            <div class="card-meta mono"><span class="lime">03</span><span>Internship · Tunisie Telecom · 2025</span></div>
+            <h3 class="pt display" id="p3t">Network Systems</h3>
+            <p class="pd">A multi-site network architecture designed and simulated with GNS3: VLANs, trunking, DHCP and inter-VLAN routing, HSRP for high availability, and a simulated operator network with PE/P equipment running MPLS, LDP and OSPF.</p>
+            <ul class="tech" aria-label="Technologies"><li>GNS3</li><li>VLAN</li><li>HSRP</li><li>MPLS</li><li>LDP</li><li>OSPF</li></ul>
+          </div>
+          <div class="card-viz" data-r style="--d:.12s">
+            <div class="viz viz-net" aria-hidden="true">
+              <div class="vbar"><i></i><i></i><i></i><span class="mono">gns3 / topology</span></div>
+              <div class="vbody">
+                <svg viewBox="0 0 480 290">
+                  <g class="lk"><path d="M52 150H150M150 150L250 78M150 150L250 222M250 78V222M250 78L350 150M250 222L350 150M350 150H448"/></g>
+                  <path class="rt" d="M52 150H150L250 78L350 150H448"/>
+                  <rect class="nd s" x="38" y="136" width="28" height="28"/>
+                  <rect class="nd s" x="434" y="136" width="28" height="28"/>
+                  <circle class="nd" cx="150" cy="150" r="12"/>
+                  <circle class="nd" cx="250" cy="78" r="12"/>
+                  <circle class="nd" cx="250" cy="222" r="12"/>
+                  <circle class="nd" cx="350" cy="150" r="12"/>
+                  <text class="tx f" x="52" y="188" text-anchor="middle">Site A</text>
+                  <text class="tx" x="52" y="204" text-anchor="middle">VLAN · DHCP</text>
+                  <text class="tx f" x="448" y="188" text-anchor="middle">Site B</text>
+                  <text class="tx" x="448" y="204" text-anchor="middle">VLAN · DHCP</text>
+                  <text class="tx" x="150" y="182" text-anchor="middle">PE1</text>
+                  <text class="tx" x="350" y="182" text-anchor="middle">PE2</text>
+                  <text class="tx" x="250" y="54" text-anchor="middle">P1</text>
+                  <text class="tx" x="250" y="252" text-anchor="middle">P2</text>
+                  <text class="tx" x="14" y="26">HSRP gateway pair</text>
+                  <text class="tx" x="466" y="26" text-anchor="end">MPLS / LDP / OSPF</text>
+                  <circle class="pkt" r="4"><animateMotion dur="3.4s" repeatCount="indefinite" path="M52 150H150L250 78L350 150H448"/></circle>
+                  <circle class="pkt" r="4"><animateMotion dur="3.4s" begin="1.7s" repeatCount="indefinite" path="M448 150H350L250 78L150 150H52"/></circle>
+                  <circle class="pkt dim" r="3"><animateMotion dur="3.4s" begin="0.9s" repeatCount="indefinite" path="M52 150H150L250 222L350 150H448"/></circle>
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      {# CI/CD #}
+      <article class="card" id="p-cicd" style="--i:3" aria-labelledby="p4t">
+        <div class="card-in">
+          <span class="card-no" data-par="0.07" aria-hidden="true">04</span>
+          <div class="card-copy" data-r>
+            <div class="card-meta mono"><span class="lime">04</span><span>Final-year project · Sopra HR · 2024</span></div>
+            <h3 class="pt display" id="p4t">CI/CD Pipeline</h3>
+            <p class="pd">A CI/CD pipeline for an HR web application (GP4YOU). Deployments are automated with Jenkins and Argo CD using a GitOps approach, with services containerised in Docker and orchestrated on Kubernetes (Minikube). Automated tests (Jest, Cypress) and application security tests (XSS, CSRF) run in the pipeline.</p>
+            <ul class="tech" aria-label="Technologies"><li>Jenkins</li><li>Argo CD</li><li>Docker</li><li>Kubernetes</li><li>Jest</li><li>Cypress</li></ul>
+          </div>
+          <div class="card-viz" data-r style="--d:.12s">
+            <div class="viz viz-pipe" aria-hidden="true">
+              <div class="vbar"><i></i><i></i><i></i><span class="mono">pipeline / main</span></div>
+              <div class="vbody">
+                <div class="stages">
+                  <div class="stage" style="--k:0"><span class="mono">Commit</span><b>Git</b></div>
+                  <div class="stage" style="--k:1"><span class="mono">Build · Test</span><b>Jenkins</b></div>
+                  <div class="stage" style="--k:2"><span class="mono">Image</span><b>Docker</b></div>
+                  <div class="stage" style="--k:3"><span class="mono">Sync</span><b>Argo CD</b></div>
+                  <div class="stage" style="--k:4"><span class="mono">Run</span><b>K8s</b></div>
+                </div>
+                <div class="beam"><i></i></div>
+                <div class="logs mono">
+                  <p style="--k:0"><b class="lime">✓</b> git push origin main</p>
+                  <p style="--k:1"><b class="lime">✓</b> jenkins · jest + cypress passed</p>
+                  <p style="--k:2"><b class="lime">✓</b> docker · image built</p>
+                  <p style="--k:3"><b class="lime">✓</b> argo cd · synced from git</p>
+                  <p style="--k:4"><b class="lime">✓</b> kubernetes · rollout on minikube</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+    </div>
+
+    <div class="sub-head">
+      <h3 class="display"><span></span>Infrastructure labs</h3>
+      <span class="count mono">03 labs</span>
+    </div>
+
+    <div class="labs">
+      {% for l in labs %}
+      <article class="mini" id="lab-{{ l.no|lower }}" data-r style="--d:{{ loop.index0 * 80 }}ms">
+        <div class="mini-k"><span class="mini-no" aria-hidden="true">{{ l.no }}</span><span class="mono">Lab</span></div>
+        <h4 class="display">{{ l.title }}</h4>
+        <p class="mini-cmd mono">{{ l.cmd }}<i class="caret"></i></p>
+        <p>{{ l.text }}</p>
+        <ul class="tech" aria-label="Technologies">{% for t in l.tags %}<li>{{ t }}</li>{% endfor %}</ul>
+      </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{# ───────── 02 Experience ───────── #}
+<section class="sec experience" id="experience" aria-labelledby="experience-h">
+  <div class="wrap">
+    <header class="sec-head">
+      <p class="mono sec-k"><span class="lime">02</span> / Experience</p>
+      <h2 class="sec-title display" id="experience-h" data-split>Hands-on <em>experience.</em></h2>
+      <p class="sec-sub">Five placements across network engineering, DevOps, backend development, monitoring and system administration. Most recent first.</p>
+      <i class="rule"></i>
+    </header>
+
+    <ol class="xp">
+      {% for x in experience %}
+      <li class="xp-row" id="xp-{{ loop.index }}" data-r>
+        <div class="xp-when">
+          <span class="xp-yr">{{ x.year }}</span>
+          <span class="mono">{{ x.kind }}</span>
+        </div>
+        <div class="xp-rail" aria-hidden="true"><i></i></div>
+        <div class="xp-main">
+          <div class="xp-top">
+            <h3 class="xp-org display">{{ x.org }}</h3>
+            <span class="xp-idx mono">{{ '%02d'|format(loop.index) }} / {{ '%02d'|format(experience|length) }}</span>
+          </div>
+          <p class="mono lime xp-focus">{{ x.focus }}</p>
+          <ul class="xp-list">
+            {% for b in x.bullets %}<li>{{ b }}</li>{% endfor %}
+          </ul>
+          <ul class="tech xp-tags" aria-label="Technologies">
+            {% for t in x.tags %}<li>{{ t }}</li>{% endfor %}
+          </ul>
+        </div>
+      </li>
+      {% endfor %}
+    </ol>
+  </div>
+</section>
+
+{# ───────── 03 Skills ───────── #}
+<section class="sec tools" id="skills" aria-labelledby="skills-h">
+  <div class="wrap">
+    <header class="sec-head">
+      <p class="mono sec-k"><span class="lime">03</span> / Skills</p>
+      <h2 class="sec-title display" id="skills-h" data-split>Technical <em>skills.</em></h2>
+      <p class="sec-sub">Grouped by area. Pick a category, then hover a tool to see where I used it.</p>
+      <i class="rule"></i>
+    </header>
+
+    <div class="tools-g">
+      <div class="tabs">
+        {% for s in skills %}
+        <button class="tab{% if loop.first %} on{% endif %}" type="button" aria-pressed="{% if loop.first %}true{% else %}false{% endif %}" data-cmd="{{ s.cmd }}"><span class="mono">{{ '%02d'|format(loop.index) }}</span><span class="tab-t display">{{ s.title }}</span><span class="tab-c mono">{{ '%02d'|format(s['items']|length) }}</span></button>
+        {% endfor %}
+      </div>
+
+      <div class="term" data-r>
+        <div class="vbar"><i></i><i></i><i></i><span class="mono">siiker@tunis: ~/skills</span></div>
+        <div class="term-body">
+          <p class="prompt mono"><span class="lime">$</span> <span data-cmd>{{ skills[0].cmd }}</span></p>
+
+          {% for s in skills %}
+          <div class="pane{% if loop.first %} on{% endif %}">
+            {% for it in s['items'] %}<button class="chip" type="button" data-n="{{ it[1] }}">{{ it[0] }}</button>{% endfor %}
+          </div>
+          {% endfor %}
+
+          <p class="readout mono" aria-live="polite"><span class="lime">›</span> <span id="readtxt">Hover a tool to see where it was used.</span><i class="caret"></i></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="skillmap">
+      <div class="sub-head first">
+        <h3 class="display"><span></span>Skill map</h3>
+        <span class="count mono" data-graph-count>32 tools</span>
+      </div>
+      <p class="sec-sub">Pick a tool to see where I used it, or pick a project or placement to see what it used. Matching tags light up across the page.</p>
+
+      <div class="graph" data-r>
+        <div class="g-tools" role="group" aria-label="Tools">
+          {% for grp in graphTools %}
+          <div class="g-group">
+            <span class="g-cat mono">{{ grp.g }}</span>
+            {% for tl in grp['items'] %}<button class="g-tool" type="button" aria-pressed="false" data-tool="{{ tl }}">{{ tl }}</button>{% endfor %}
+          </div>
+          {% endfor %}
+        </div>
+
+        <div class="g-ents" role="group" aria-label="Projects and placements">
+          {% for e in entities %}
+          <button class="g-ent" type="button" aria-pressed="false" data-uses="{{ e.tools|join('|') }}" data-proj="{{ e.proj }}" data-exp="{{ e.exp }}">
+            <span class="g-e-n mono">{{ '%02d'|format(loop.index) }}</span>
+            <b class="display">{{ e.name }}</b>
+            <span class="g-e-c mono">{{ e.tools|length }} tools</span>
+            <span class="g-e-m mono">{{ e.meta }}</span>
+          </button>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="g-info" aria-live="polite">
+        <span class="g-msg">Pick a tool or an entry to see how they connect.</span>
+        <button class="g-clear mono" type="button" hidden>Clear ✕</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+{# ───────── 04 About ───────── #}
+<section class="sec about" id="about" aria-labelledby="about-h">
+  <div class="wrap">
+    <header class="sec-head">
+      <p class="mono sec-k"><span class="lime">04</span> / About me</p>
+      <h2 class="sec-title display" id="about-h" data-split>Ben Lagha <em>Mohamed.</em></h2>
+      <i class="rule"></i>
+    </header>
+
+    <p class="statement display" data-scrub>Engineering student specialised in <em>networks</em> and IT services, with a marked interest in IT <em>infrastructure</em>, <em>DevOps</em> and <em>cybersecurity</em>.</p>
+
+    <div class="about-g">
+      <div class="about-l">
+        <p class="about-p" data-r>I'm an engineering student at the Private Mediterranean Institute of Tunisia (MIT), specialising in Business Intelligence, after an applied licence in networks and IT services at ISET Charguia.</p>
+        <p class="about-p dim" data-r style="--d:.1s">That mix shows in my work: I've built CI/CD pipelines, simulated and virtualised networks, administered Windows domains, monitored infrastructure and shipped full-stack applications with secured APIs.</p>
+
+        <div class="core" data-r style="--d:.15s">
+          <span class="mono blk-h">Core focus</span>
+          <ul>
+            <li><b>01</b>Network architecture &amp; security</li>
+            <li><b>02</b>DevOps &amp; automation</li>
+            <li><b>03</b>Full-stack development</li>
+            <li><b>04</b>Infrastructure operations</li>
+          </ul>
+        </div>
+
+      </div>
+
+      <div class="about-r">
+        <span class="mono blk-h">Education</span>
+        <ol class="tl">
+          <li data-r><span class="tl-d mono">2025 — Present</span><h3 class="display">MIT Tunis</h3><p>Engineering cycle in Information Technology. Specialisation: Business Intelligence.</p></li>
+          <li data-r><span class="tl-d mono">2025</span><h3 class="display">ISET Charguia</h3><p>Applied licence in Information Technology. Specialisation: Networks and IT Services.</p></li>
+          <li data-r><span class="tl-d mono">2022</span><h3 class="display">Baccalauréat</h3><p>Lycée El Farabi, Mornaguia.</p></li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat" data-r><b data-count="5">05</b><span class="mono">Placements</span></div>
+      <div class="stat" data-r style="--d:.08s"><b data-count="7">07</b><span class="mono">Projects</span></div>
+      <div class="stat" data-r style="--d:.16s"><b data-count="tools">00</b><span class="mono">Technologies</span></div>
+      <div class="stat" data-r style="--d:.24s"><b data-count="3">03</b><span class="mono">Languages</span></div>
+    </div>
+
+    <div class="about-b">
+      <div data-r>
+        <span class="mono blk-h">Languages</span>
+        <ul class="lang">
+          {% for l in languages %}
+          <li>
+            <b>{{ l.name }}</b>
+            <span class="mono">{{ l.level }}</span>
+            <span class="pips" aria-hidden="true">{% for n in 1..5 %}{% if n <= l.lv %}<s class="on" style="--n:{{ n }}"></s>{% else %}<s></s>{% endif %}{% endfor %}</span>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+      <div data-r style="--d:.1s">
+        <span class="mono blk-h">Strengths</span>
+        <div class="strengths">
+          <span class="pill">Quick to adapt</span>
+          <span class="pill">Always learning</span>
+          <span class="pill">Problem solving</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{# ───────── 05 Contact ───────── #}
+<section class="contact" id="contact" aria-labelledby="c-h">
+  <div class="wrap">
+    <p class="mono sec-k"><span>05</span> / Contact</p>
+    <h2 class="c-h display" id="c-h" data-split>Have something <em>in mind?</em></h2>
+
+    <a class="c-mail" id="mail" data-mag href="mailto:laghal857@gmail.com"><span class="c-mail-t">laghal857@gmail.com</span><span class="ar" aria-hidden="true">→</span></a>
+
+    <div class="c-row">
+      <div class="c-col" data-r>
+        <span class="mono">Elsewhere</span>
+        <a class="c-a" href="https://github.com/Siikerloyd" rel="noopener">GitHub <span aria-hidden="true">↗</span></a>
+        <a class="c-a" href="https://www.linkedin.com/in/ben-lagha-mohamed-460444338" rel="noopener">LinkedIn <span aria-hidden="true">↗</span></a>
+        <a class="c-a" href="{{ asset('cv/Ben-Lagha-Mohamed-CV.pdf') }}" download>Download CV <span aria-hidden="true">↓</span></a>
+      </div>
+      <div class="c-col" data-r style="--d:.08s">
+        <span class="mono">Phone</span>
+        <a class="c-a" href="tel:+21648028770">+216 48 028 770</a>
+        <span class="mono">Tunis · <time data-clock="hms">--:--:--</time></span>
+      </div>
+      <div class="c-col" data-r style="--d:.16s">
+        <span class="mono">Quick copy</span>
+        <button class="copy" id="copyBtn" type="button">Copy address</button>
+        <span class="mono" id="copyMsg" role="status"></span>
+      </div>
+    </div>
+
+    <footer class="foot mono">
+      <span>End of transmission / SIIKER © 2026</span>
+      <span>Built with Symfony + Twig</span>
+      <a href="#hero">Back to top ↑</a>
+    </footer>
+  </div>
+</section>
+
+</main>
+{% endblock %}
