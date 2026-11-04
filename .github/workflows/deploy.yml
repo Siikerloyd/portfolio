@@ -1,0 +1,74 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: 'pages'
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: ctype, iconv, intl, pdo_sqlite
+          coverage: none
+
+      - name: Install Composer Dependencies
+        run: composer install --no-dev --optimize-autoloader --no-interaction
+
+      - name: Build Static Site
+        env:
+          APP_ENV: prod
+          APP_DEBUG: 0
+          APP_SECRET: 8f7b3c29e1a4d65019842bf689e47201
+          DATABASE_URL: sqlite:///%kernel.project_dir%/var/data.db
+        run: |
+          # Warm cache
+          php bin/console cache:clear --env=prod
+          
+          # Start background PHP server
+          php -S 127.0.0.1:8000 -t public &
+          SERVER_PID=$!
+          sleep 3
+          
+          # Render the home page to static index.html
+          curl -s http://127.0.0.1:8000/ -o public/index.html
+          kill $SERVER_PID
+          
+          # Convert root-relative asset URLs to relative paths so they work on GitHub Pages subpaths
+          sed -i 's|href="/css/|href="css/|g' public/index.html
+          sed -i 's|src="/js/|src="js/|g' public/index.html
+          sed -i 's|href="/cv/|href="cv/|g' public/index.html
+          
+          # Prevent Jekyll processing and remove php entrypoint
+          touch public/.nojekyll
+          rm -f public/index.php
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: public/
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
