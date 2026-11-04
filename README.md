@@ -37,7 +37,6 @@
 |:---:|:---:|
 | ![Experience](docs/screenshots/experience.png) | ![Contact](docs/screenshots/contact.png) |
 
-> Tip: capture at ~1440×900 for crisp results on retina displays.
 
 ---
 
