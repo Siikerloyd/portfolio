@@ -1,0 +1,11 @@
+.git/
+.env.local
+.env.*.local
+.phpunit.cache/
+tests/
+var/cache/*
+var/log/*
+vendor/
+docker-compose*.yaml
+compose*.yaml
+
