@@ -28,7 +28,6 @@
 
 ## 📸 Screenshots
 
-Drop your captures into `docs/screenshots/` (create the folder if needed) and they will render here.
 
 | Hero & Intro | Projects |
 |:---:|:---:|
