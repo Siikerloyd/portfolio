@@ -15,12 +15,6 @@ concurrency:
   group: 'pages'
   cancel-in-progress: true
 
-env:
-  APP_ENV: prod
-  APP_DEBUG: 0
-  APP_SECRET: 8f7b3c29e1a4d65019842bf689e47201
-  DATABASE_URL: sqlite:///%kernel.project_dir%/var/data.db
-
 jobs:
   deploy:
     environment:
@@ -39,35 +33,39 @@ jobs:
           coverage: none
 
       - name: Install Composer Dependencies
-        run: composer install --no-dev --optimize-autoloader --no-scripts --no-interaction
+        run: composer install --optimize-autoloader --no-interaction
+
+      - name: Force Production Environment
+        run: |
+          cat > .env.local.php << 'EOF'
+          <?php return [
+            'APP_ENV' => 'prod',
+            'APP_DEBUG' => '0',
+            'APP_SECRET' => '8f7b3c29e1a4d65019842bf689e47201',
+            'DATABASE_URL' => 'sqlite:///%kernel.project_dir%/var/data.db',
+            'MESSENGER_TRANSPORT_DSN' => 'doctrine://default?auto_setup=0',
+            'MAILER_DSN' => 'null://null',
+          ];
+          EOF
 
       - name: Build Static Site
         run: |
-          # Compile prod env so Symfony runtime boots strictly in production
-          composer dump-env prod
-          
-          # Warm cache and install assets
           php bin/console cache:clear --env=prod
           php bin/console assets:install public --env=prod
-          
-          # Start background PHP server
-          APP_ENV=prod APP_DEBUG=0 php -S 127.0.0.1:8000 -t public &
-          SERVER_PID=$!
+
+          php -S 127.0.0.1:8000 -t public &
           sleep 4
-          
-          # Render the home page to static index.html
+
           curl -f -s http://127.0.0.1:8000/ -o public/index.html
-          kill $SERVER_PID
-          
-          # Convert root-relative asset URLs to relative paths so they work on GitHub Pages subpaths
+          kill %1
+
+          # Fix paths for GitHub Pages subpath (/portfolio/)
           sed -i 's|href="/css/|href="css/|g' public/index.html
           sed -i 's|src="/js/|src="js/|g' public/index.html
           sed -i 's|href="/cv/|href="cv/|g' public/index.html
-          
-          # Clean up server files so GitHub Pages only gets the static site
+
           touch public/.nojekyll
           rm -f public/index.php
-          rm -f .env.local.php
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3

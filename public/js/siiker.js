@@ -398,6 +398,22 @@
       e._u = (e.getAttribute('data-uses') || '').split('|').filter(Boolean).map(slug);
       e._n = $('b', e).textContent;
     });
+    ents.forEach(function (e) {
+      var w = document.createElement('span'); w.className = 'g-e-t';
+      var raw = (e.getAttribute('data-uses') || '').split('|').filter(Boolean);
+      raw.forEach(function (n) { var i = document.createElement('i'); i.textContent = n; i._s = slug(n); w.appendChild(i); });
+      e.appendChild(w);
+    });
+    var more = document.createElement('button');
+    more.type = 'button'; more.className = 'g-more mono'; more.setAttribute('aria-expanded', 'false');
+    more.textContent = 'Browse by tool ↓';
+    var toolsBox = $('.g-tools', graph);
+    graph.insertBefore(more, toolsBox);
+    more.addEventListener('click', function () {
+      var o = !graph.classList.contains('open'); graph.classList.toggle('open', o);
+      more.setAttribute('aria-expanded', o ? 'true' : 'false');
+      more.textContent = o ? 'Hide tools ↑' : 'Browse by tool ↓';
+    });
     var counter = $('[data-graph-count]');
     if (counter) counter.textContent = tools.length + ' tools / ' + ents.length + ' entries';
 
@@ -410,18 +426,21 @@
     function layout() {
       while (svg.firstChild) svg.removeChild(svg.firstChild);
       lines = [];
-      if (!mq.matches) return;
+      var wide = mq.matches;
+      if (!wide) return;
       var g = graph.getBoundingClientRect();
       ents.forEach(function (e) {
         var er = e.getBoundingClientRect();
         var x2 = er.left - g.left, y2 = er.top - g.top + er.height / 2;
         e._u.forEach(function (u) {
           var t = tmap[u]; if (!t) return;
-          var tr = t.getBoundingClientRect();
-          var x1 = tr.right - g.left, y1 = tr.top - g.top + tr.height / 2;
-          var dx = (x2 - x1) * .5;
+          var tr = t.getBoundingClientRect(), d;
+          if (wide) {
+            var x1 = tr.right - g.left, y1 = tr.top - g.top + tr.height / 2, dx = (x2 - x1) * .5;
+            d = 'M' + x1.toFixed(1) + ' ' + y1.toFixed(1) + 'C' + (x1 + dx).toFixed(1) + ' ' + y1.toFixed(1) + ' ' + (x2 - dx).toFixed(1) + ' ' + y2.toFixed(1) + ' ' + x2.toFixed(1) + ' ' + y2.toFixed(1);
+          }
           var p = document.createElementNS(NS, 'path');
-          p.setAttribute('d', 'M' + x1.toFixed(1) + ' ' + y1.toFixed(1) + 'C' + (x1 + dx).toFixed(1) + ' ' + y1.toFixed(1) + ' ' + (x2 - dx).toFixed(1) + ' ' + y2.toFixed(1) + ' ' + x2.toFixed(1) + ' ' + y2.toFixed(1));
+          p.setAttribute('d', d);
           p.setAttribute('pathLength', '1');
           svg.appendChild(p);
           lines.push({ p: p, t: t, e: e });
@@ -470,6 +489,9 @@
         var on = !!cur && (cur === l.t || cur === l.e);
         if (on !== l.p.classList.contains('on')) l.p.classList.toggle('on', on);
       });
+      ents.forEach(function (e) {
+        $$('.g-e-t i', e).forEach(function (i) { i.classList.toggle('hit', litSlugs.indexOf(i._s) > -1); });
+      });
       $$('.tech li').forEach(function (li) {
         var s = slug(li.textContent);
         li.classList.toggle('lit', litSlugs.indexOf(s) > -1);
@@ -500,7 +522,13 @@
       }
       if (clearBtn) clearBtn.hidden = !locked;
     }
-    function lock(el) { locked = (locked === el) ? null : el; paint(); }
+    function lock(el) {
+      locked = (locked === el) ? null : el; paint();
+      if (locked && !mq.matches && el.classList.contains('g-tool')) {
+        var box = $('.g-ents', graph), top = box.getBoundingClientRect().top + scrollY - 90;
+        window.scrollTo({ top: top, behavior: isMo() ? 'smooth' : 'auto' });
+      }
+    }
 
     tools.concat(ents).forEach(function (el) {
       el.addEventListener('click', function () { lock(el); });
@@ -683,6 +711,7 @@
     var prog = $('.progress'), hero = $('.hero'), wrap = $('.marq-wrap'), tl = $('.tl');
     var rail = $('.rail'), xps = $$('.xp-row'), pars = $$('[data-par]'), contact = $('.contact');
     var cards = $$('.card');
+    var fit = false;
     var deck = $('.deck'), hud = null, hudN, hudT, hudS = [], hudCur = -1;
     if (deck && cards.length) {
       hud = document.createElement('div'); hud.className = 'deck-hud'; hud.setAttribute('aria-hidden', 'true');
@@ -702,6 +731,12 @@
       else { skewRun = false; if (wrap) wrap.style.setProperty('--skew', '0deg'); }
     }
 
+    function calcFit() {
+      var vh = innerHeight, h = (hd ? hd.offsetHeight : 64);
+      fit = innerWidth < 900 && cards.every(function (c) { return c.offsetHeight <= vh - h - 30 - cards.length * 12; });
+      if (deck) deck.classList.toggle('st', fit);
+      req();
+    }
     function update() {
       ticking = false;
       var y = window.scrollY, vh = window.innerHeight;
@@ -725,7 +760,7 @@
         if (!skewRun) { skewRun = true; requestAnimationFrame(skewLoop); }
       }
 
-      var wantStack = mo && mqStack.matches, hdH = (hd ? hd.offsetHeight : 64);
+      var wantStack = mo && (mqStack.matches || fit), hdH = (hd ? hd.offsetHeight : 64);
       var act = -1;
       cards.forEach(function (c, i) {
         var inner = c.firstElementChild, nx = cards[i + 1], r = c.getBoundingClientRect(), p = 0, e = 1;
@@ -795,6 +830,11 @@
     addEventListener('scroll', req, { passive: true });
     addEventListener('resize', req, { passive: true });
     document.addEventListener('siiker:motion', req);
+    addEventListener('resize', calcFit);
+    addEventListener('load', calcFit);
+    document.addEventListener('siiker:motion', calcFit);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(calcFit);
+    calcFit();
     update();
   });
 })();

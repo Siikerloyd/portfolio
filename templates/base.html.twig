@@ -11,16 +11,14 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;900&family=Hanken+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
     {# Runs before first paint.
        - "mo" class  = motion ON. Every hidden/animated start state in the CSS is gated on it.
-       - Mode comes from the visitor's saved choice, else the OS "reduce motion" setting.
+       - Mode comes from the visitor's saved choice (header toggle); the default is ON.
        - If the main script has not started after 4s, "mo" is removed so nothing can stay hidden. #}
     <script>
     (function () {
         var d = document.documentElement, m = null;
         d.classList.add('js');
         try { m = localStorage.getItem('siiker-motion'); } catch (e) {}
-        if (m !== 'full' && m !== 'calm') {
-            m = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches ? 'calm' : 'full';
-        }
+        if (m !== 'full' && m !== 'calm') { m = 'full'; }
         d.setAttribute('data-motion', m);
         if (m === 'full') { d.classList.add('mo'); }
         setTimeout(function () {
@@ -28,13 +26,13 @@
         }, 4000);
     })();
     </script>
-    {% block stylesheets %}<link rel="stylesheet" href="{{ asset('css/siiker.css') }}?v=7">{% endblock %}
+    {% block stylesheets %}<link rel="stylesheet" href="{{ asset('css/siiker.css') }}?v=8">{% endblock %}
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
 <div class="progress" aria-hidden="true"><i></i></div>
 <div class="grain" aria-hidden="true"></div>
 {% block body %}{% endblock %}
-{% block javascripts %}<script src="{{ asset('js/siiker.js') }}?v=7" defer></script>{% endblock %}
+{% block javascripts %}<script src="{{ asset('js/siiker.js') }}?v=8" defer></script>{% endblock %}
 </body>
 </html>
