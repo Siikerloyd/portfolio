@@ -43,17 +43,20 @@ jobs:
 
       - name: Build Static Site
         run: |
+          # Compile prod env so Symfony runtime boots strictly in production
+          composer dump-env prod
+          
           # Warm cache and install assets
           php bin/console cache:clear --env=prod
           php bin/console assets:install public --env=prod
           
           # Start background PHP server
-          php -S 127.0.0.1:8000 -t public &
+          APP_ENV=prod APP_DEBUG=0 php -S 127.0.0.1:8000 -t public &
           SERVER_PID=$!
-          sleep 3
+          sleep 4
           
           # Render the home page to static index.html
-          curl -s http://127.0.0.1:8000/ -o public/index.html
+          curl -f -s http://127.0.0.1:8000/ -o public/index.html
           kill $SERVER_PID
           
           # Convert root-relative asset URLs to relative paths so they work on GitHub Pages subpaths
@@ -61,9 +64,10 @@ jobs:
           sed -i 's|src="/js/|src="js/|g' public/index.html
           sed -i 's|href="/cv/|href="cv/|g' public/index.html
           
-          # Prevent Jekyll processing and remove php entrypoint
+          # Clean up server files so GitHub Pages only gets the static site
           touch public/.nojekyll
           rm -f public/index.php
+          rm -f .env.local.php
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
