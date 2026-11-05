@@ -37,16 +37,18 @@ jobs:
 
       - name: Force Production Environment
         run: |
-          cat > .env.local.php << 'EOF'
+          cat > .env.local.php << 'ENVPHP'
           <?php return [
             'APP_ENV' => 'prod',
             'APP_DEBUG' => '0',
             'APP_SECRET' => '8f7b3c29e1a4d65019842bf689e47201',
+            'APP_SHARE_DIR' => 'var/share',
+            'DEFAULT_URI' => 'http://localhost',
             'DATABASE_URL' => 'sqlite:///%kernel.project_dir%/var/data.db',
             'MESSENGER_TRANSPORT_DSN' => 'doctrine://default?auto_setup=0',
             'MAILER_DSN' => 'null://null',
           ];
-          EOF
+          ENVPHP
 
       - name: Build Static Site
         run: |
