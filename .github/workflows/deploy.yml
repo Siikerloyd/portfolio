@@ -15,6 +15,12 @@ concurrency:
   group: 'pages'
   cancel-in-progress: true
 
+env:
+  APP_ENV: prod
+  APP_DEBUG: 0
+  APP_SECRET: 8f7b3c29e1a4d65019842bf689e47201
+  DATABASE_URL: sqlite:///%kernel.project_dir%/var/data.db
+
 jobs:
   deploy:
     environment:
@@ -33,17 +39,13 @@ jobs:
           coverage: none
 
       - name: Install Composer Dependencies
-        run: composer install --no-dev --optimize-autoloader --no-interaction
+        run: composer install --no-dev --optimize-autoloader --no-scripts --no-interaction
 
       - name: Build Static Site
-        env:
-          APP_ENV: prod
-          APP_DEBUG: 0
-          APP_SECRET: 8f7b3c29e1a4d65019842bf689e47201
-          DATABASE_URL: sqlite:///%kernel.project_dir%/var/data.db
         run: |
-          # Warm cache
+          # Warm cache and install assets
           php bin/console cache:clear --env=prod
+          php bin/console assets:install public --env=prod
           
           # Start background PHP server
           php -S 127.0.0.1:8000 -t public &
@@ -71,4 +73,3 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-
