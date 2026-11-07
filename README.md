@@ -117,9 +117,3 @@ portfolio/
 - **CV:** [`public/cv/Ben-Lagha-Mohamed-CV.pdf`](public/cv/Ben-Lagha-Mohamed-CV.pdf)
 
 ---
-
-## 📄 License
-
-Proprietary — © 2026 Ben Lagha Mohamed. All rights reserved.
-
-<p align="center"><sub>Built with Symfony + Twig · SIIKER © 2026</sub></p>
