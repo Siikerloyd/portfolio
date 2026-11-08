@@ -1,5 +1,5 @@
 /* ============================================================================
-   SIIKER v2 — dark editorial, motion-first portfolio
+   SIIKER  — dark editorial, motion-first portfolio
    RULES THAT KEEP IT FROM BREAKING
    1. Every hidden / animated START state is gated on  html.mo  (motion on).
       No .mo  =>  everything is visible and still. So nothing can stay invisible.
